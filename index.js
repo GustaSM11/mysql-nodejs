@@ -3,38 +3,44 @@ var express = require('express');
 var app = express();
 
 var bodyParser = require('body-parser');
-const { error } = require("console");
+
 
 app.use(bodyParser.json());
 
-app.use(bodyParser.urlencoded({extended: true}))
+app.use(bodyParser.urlencoded({ extended: true }))
 
 app.set("view engine", 'ejs');
 
-app.get('/', function(req, res){
+// Conexão ao banco de dados uma vez no início
+conexao.connect(function (error) {
+    if (error) {
+        console.error("Erro ao conectar ao banco de dados");
+        process.exit(); // encerrar o servidor caso a conexâo falhe
+    };
+})
+
+app.get('/', function (req, res) {
     res.sendFile(__dirname + '/cadastro.html');
 });
-app.get('/estudantes', function(req, res){
-    if(error) console.log(error);
-    var sql = "select *from estudante";
-    conexao.query(sql, function(error, result){
-        if(error) console.log(error);
-        console.log(result);
+app.get('/estudantes', function (req, res) {
+    var sql = "select * from estudante";
+    conexao.query(sql, function (error, result) {
+        if (error) console.log(error);
+        // console.log(result);
+        res.render(__dirname + "/estudantes", { estudante: result });
     })
 })
 
-app.post('/', function(req, res){
+app.post('/', function (req, res) {
     var nomecompleto = req.body.nomecompleto;
     var email = req.body.email;
     var senha = req.body.senha;
-    conexao.connect(function(error){
-        if(error) throw error;
-        // previnindo SQL Injection
-        var sql = "INSERT INTO estudante(nomecompleto, email, senha) VALUES (?, ?, ?)";
-        conexao.query(sql, [nomecompleto, email, senha], function(error, result){
-            if(error) throw error;
-            res.send("Estudante cadastrado com sucesso! "+ result.insertId);
-        })
+
+    // previnindo SQL Injection
+    var sql = "INSERT INTO estudante(nomecompleto, email, senha) VALUES (?, ?, ?)";
+    conexao.query(sql, [nomecompleto, email, senha], function (error, result) {
+        if (error) throw error;
+        res.redirect("/estudantes");
     });
 })
 
