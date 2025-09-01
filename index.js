@@ -42,8 +42,39 @@ app.post('/', function (req, res) {
         if (error) throw error;
         res.redirect("/estudantes");
     });
-})
+});
+app.get('/delete-estudante', function (req, res) {
+    var id = req.query.id;
 
+    var sql = "DELETE FROM estudante WHERE id = ?";
+    conexao.query(sql, [id], function (error, result) {
+        if (error) console.log(error);
+        res.redirect("/estudantes");
+    });
+});
+
+app.get('/update-estudante', function (req, res) {
+    var id = req.query.id;
+
+    var sql = "SELECT * FROM estudante WHERE id = ?";
+    conexao.query(sql, [id], function (error, result) {
+        if (error) console.log(error);
+        res.render(__dirname + "/alterarestudantes", { estudante: result });
+    })
+})
+app.post('/update-estudante', function (req, res) {
+    var nomecompleto = req.body.nomecompleto;
+    var email = req.body.email;
+    var senha = req.body.senha;
+    var id = req.body.id;
+
+    var sql = "UPDATE estudante SET nomecompleto = ?, email = ?, senha = ? WHERE id = ? ";
+    conexao.query(sql, [nomecompleto, email, senha, id], function (error, result){
+        if(error) console.log(error);
+        res.render(__dirname + '/alterarestudantes', {estudante: result});
+        res.redirect('/estudantes');
+    })
+})
 app.listen(7000);
 
 //     // console.log("O banco de dados foi conectado");
