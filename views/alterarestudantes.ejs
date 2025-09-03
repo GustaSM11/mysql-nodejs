@@ -1,0 +1,11 @@
+<h1>Alterar Cadastro</h1>
+<form action="/update-estudante?_method=PUT" method="post">
+    <input type="hidden" name="id" value="<%= estudante.id %>">
+    <input type="text" name="nomecompleto" value="<%=estudante.nomecompleto%>" placeholder="Insira seu nome completo"
+        required><br><br>
+    <input type="email" name="email" value="<%=estudante.email%>" placeholder="Insira o seu e-mail"
+        required><br><br>
+    <input type="password" name="senha" value="<%=estudante.nomecompleto%>" placeholder="Insira a sua senha"
+        required><br><br>
+    <button type="submit">Atualizar</button>
+</form>
